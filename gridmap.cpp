@@ -2,31 +2,32 @@
 #include "grid.h"
 #include "gridmap.h"
 
+#include <cstdlib>
 #include <queue>
+#include <unistd.h>
 
 // struct BFSNode
 // Data fields:
 //     Coord coord: coordinate of this node
-//     unsigned dist: distance from the source node to this node
+//     int dist: distance from the source node to this node
 // Used in GridMap::updateRoute()
 struct BFSNode {
-    BFSNode(Coord coord, unsigned dist)
+    BFSNode(Coord coord, int dist)
         :coord(coord),
          dist(dist) {}
-    BFSNode() {}
     bool operator<(const BFSNode &rhs) const {
         return dist > rhs.dist;
     }
     Coord coord;
-    unsigned dist;
+    int dist;
 };
 
 
 // GridMap constructor 
-GridMap::GridMap(unsigned width, unsigned height)
+GridMap::GridMap(int width, int height)
     :_width(width),
      _height(height) {
-    // construct a two dimensional array of grids
+    // construct a two dimensional array of grids and visit
     _grids = new Grid*[height];
     _visited = new bool*[height];
     for (size_t i = 0; i < height; ++i) {
@@ -46,7 +47,7 @@ GridMap::~GridMap() {
 }
 
 // Set the target coordinate of the map
-void GridMap::setTarget(unsigned x, unsigned y) {
+void GridMap::setTarget(int x, int y) {
     _target = Coord(x, y);
 }
 
@@ -55,6 +56,14 @@ void GridMap::setTarget(unsigned x, unsigned y) {
 //
 // This method uses a variant of Breadth-First Search to
 // calculate the routes.
+//
+// To begin with, the target node is pushed into the priority
+// queue with distance 0. While the priorit queue is not
+// empty, at each iteration, the node with minimal distance will 
+// be popped from the queue. Then its adjacent nodes will
+// be inspected. For each adjacent node, if it has not been
+// visited before, it will be pushed into the queue with the
+// new distance and its direction and visited flag will be set.
 //
 // The Creeps can go horizontally, vertically or diagonally.
 // A diagonal direction is valid only when the the diagonal
@@ -105,9 +114,10 @@ void GridMap::updateRoute() {
     };
 
     // indicate whether the diagonal direction is available
-    bool diagonal_valid[4] = {true, true, true, true};
+    bool diagonal_valid[] = {true, true, true, true};
 
     // Step1: Clear all grids' direction to be Grid::NONE
+    //        and mark all grids as un-visited
     clearGridsFlags();
 
     // Step2: Begin BFS
@@ -122,7 +132,7 @@ void GridMap::updateRoute() {
         pq.pop();
 
         Coord coord = node.coord;
-        unsigned dist = node.dist;
+        int dist = node.dist;
 
         // Inspect the adjacent nodes
         for (size_t i = 0; i < 4; ++i) {
@@ -140,7 +150,7 @@ void GridMap::updateRoute() {
                     // Push the node into the queue
                     pq.push(BFSNode(Coord(next_x, next_y), dist + 10));
                     
-                    // Set the grid as visited
+                    // Mark the grid as visited
                     _visited[next_y][next_x] = true;
                 }
 
@@ -167,6 +177,7 @@ void GridMap::updateRoute() {
                     // Push the node into the queue
                     pq.push(BFSNode(Coord(next_x, next_y), dist + 14));
 
+                    // Mark the grid as visited
                     _visited[next_y][next_x] = true;
                 }
             } 
@@ -174,11 +185,11 @@ void GridMap::updateRoute() {
     }
 }
 
-unsigned GridMap::getWidth() const {
+int GridMap::getWidth() const {
     return _width;
 }
 
-unsigned GridMap::getHeight() const {
+int GridMap::getHeight() const {
     return _height;
 }
 
@@ -205,7 +216,13 @@ bool GridMap::isValidCoord(int x, int y) {
 #include <cstdio>
 
 void GridMap::debugPrint() const {
+    printf("   ");
+    for (size_t i = 0; i < _width; ++i) {
+        printf("%3d", i);
+    }
+    puts("");
     for (size_t i = 0; i < _height; ++i) {
+        printf("%3d ", i);
         for (size_t j = 0; j < _width; ++j) {
             switch (_grids[i][j].getDirection()) {
                 case Grid::NONE:

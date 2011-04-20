@@ -18,7 +18,7 @@ class GridMap {
 
         // GridMap constructor, takes two params namely the 
         // width and height of the map
-        GridMap(unsigned width, unsigned height);
+        GridMap(int width, int height);
 
         // destructor
         ~GridMap();
@@ -27,17 +27,17 @@ class GridMap {
         // The target coordinate is where the creeps exit
         // note that x grows from left to right and
         // y grows from top to bottom.
-        void setTarget(unsigned x, unsigned y);
+        void setTarget(int x, int y);
 
         // Update the routes, this method is called each time
         // a new tower is built or a present tower is destroyed.
         void updateRoute();
 
         // Get the width of the map
-        unsigned getWidth() const;
+        int getWidth() const;
 
         // Get the height of the map
-        unsigned getHeight() const;
+        int getHeight() const;
 
 #ifdef DEBUG
         void debugPrint() const;
@@ -60,8 +60,8 @@ class GridMap {
                             // of the grids.
                             // used in updateRoute;
 
-        unsigned _width;    // width of grid map
-        unsigned _height;   // height of grid map
+        int _width;    // width of grid map
+        int _height;   // height of grid map
 
         Coord _target;      // coordinate of source grid
 };

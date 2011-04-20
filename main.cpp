@@ -10,7 +10,7 @@
 int main(int argc, char *argv[]) {
    
     GridMap *gm = new GridMap(30, 30);
-    gm->setTarget(2, 2);
+    gm->setTarget(5, 5);
     gm->updateRoute();
     gm->debugPrint();
 
