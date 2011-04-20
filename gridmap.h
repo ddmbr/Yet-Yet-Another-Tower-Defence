@@ -59,7 +59,6 @@ class GridMap {
 
         // two dimensional array to hold the grids
         Grid **_grids;      
-        Grid *g;
 
         // two dimensional array to hold the visit of the grids.
         // used in updateRoute;
