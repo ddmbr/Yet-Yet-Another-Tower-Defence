@@ -79,6 +79,21 @@ void GridMap::updateRoute() {
     static const int d_offset_x[] = {-1, -1, 1, 1}; 
     static const int d_offset_y[] = {-1, 1, 1, -1};
 
+    // Correspondencies between index and position
+    // 
+    //     offset              d_offset:      
+    //  +---+---+---+        +---+---+---+
+    //  |   | 3 |   |        | 0 |   | 3 | 
+    //  +---+---+---+        +---+---+---+
+    //  | 0 |   | 2 |        |   |   |   |
+    //  +---+---+---+        +---+---+---+
+    //  |   | 1 |   |        | 1 |   | 2 |
+    //  +---+---+---+        +---+---+---+
+    // 
+    // if offset[i] is invalid, then
+    // d_offset[i] and 
+    // d_offset[(i + 1) % 4] is invalid.
+
     // horizontal and vertical directions
     static const Grid::Direction dirs[] = {
         Grid::RIGHT, Grid::UP, Grid::LEFT, Grid::DOWN
@@ -117,18 +132,23 @@ void GridMap::updateRoute() {
             int next_y = coord.y + offset_y[i];
 
             if (isValidCoord(next_x, next_y)) {
-                // Update the grid's direction
-                _grids[next_y][next_x].setDirection(dirs[i]);
-                
-                // Push the node into the queue
-                pq.push(BFSNode(Coord(next_x, next_y), dist + 10));
-                
-                // Set the grid as visited
-                _visited[next_y][next_x] = true;
+
+                if (not _visited[next_y][next_x]) {
+                    // Update the grid's direction
+                    _grids[next_y][next_x].setDirection(dirs[i]);
+                    
+                    // Push the node into the queue
+                    pq.push(BFSNode(Coord(next_x, next_y), dist + 10));
+                    
+                    // Set the grid as visited
+                    _visited[next_y][next_x] = true;
+                }
+
             } else {
-                // The coordinate is not valid 
+                // The coordinate is invalid 
                 // Thus the corresponding diagonal route is invalid
                 diagonal_valid[i] = false;
+                diagonal_valid[(i + 1) % 4] = false;
             }
         }
 
@@ -141,6 +161,9 @@ void GridMap::updateRoute() {
                 int next_y = coord.y + d_offset_y[i];
 
                 if (not _visited[next_y][next_x]) {
+                    // Update the grid's direction
+                    _grids[next_y][next_x].setDirection(ddirs[i]);
+
                     // Push the node into the queue
                     pq.push(BFSNode(Coord(next_x, next_y), dist + 14));
 
@@ -170,12 +193,10 @@ void GridMap::clearGridsFlags() {
     }
 }
 
-// Determine if the given coordinate is inside the map and
-// the corresponding grid has not been visited before.
+// Determine if the given coordinate is inside the map
 bool GridMap::isValidCoord(int x, int y) {
     return x >= 0 and x < _width and
-           y >= 0 and y < _height and
-           not _visited[y][x];
+           y >= 0 and y < _height;
 }
 
 
@@ -187,6 +208,8 @@ void GridMap::debugPrint() const {
     for (size_t i = 0; i < _height; ++i) {
         for (size_t j = 0; j < _width; ++j) {
             switch (_grids[i][j].getDirection()) {
+                case Grid::NONE:
+                    putchar('+'); break;
                 case Grid::LEFT:
                     putchar('<'); break;
                 case Grid::RIGHT:
@@ -195,6 +218,11 @@ void GridMap::debugPrint() const {
                     putchar('^'); break;
                 case Grid::DOWN:
                     putchar('v'); break;
+                case Grid::TOPLEFT:
+                case Grid::BOTTOMRIGHT:
+                    putchar('\\'); break;
+                default:
+                    putchar('/'); break;
             }
             putchar(' ');
         }
