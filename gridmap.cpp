@@ -4,7 +4,6 @@
 
 #include <queue>
 
-
 // struct BFSNode
 // Data fields:
 //     Coord coord: coordinate of this node
@@ -16,7 +15,7 @@ struct BFSNode {
          dist(dist) {}
     BFSNode() {}
     bool operator<(const BFSNode &rhs) const {
-        return dist < rhs.dist;
+        return dist > rhs.dist;
     }
     Coord coord;
     unsigned dist;
@@ -82,7 +81,7 @@ void GridMap::updateRoute() {
 
     // horizontal and vertical directions
     static const Grid::Direction dirs[] = {
-        Grid::RIGHT, Grid::DOWN, Grid::LEFT, Grid::UP
+        Grid::RIGHT, Grid::UP, Grid::LEFT, Grid::DOWN
     };
 
     // diagonal directions
@@ -99,6 +98,7 @@ void GridMap::updateRoute() {
     // Step2: Begin BFS
     std::priority_queue<BFSNode> pq;
     pq.push(BFSNode(_target, 0));
+    _visited[_target.y][_target.x] = true;
 
     while (not pq.empty()) {
 
@@ -121,11 +121,32 @@ void GridMap::updateRoute() {
                 _grids[next_y][next_x].setDirection(dirs[i]);
                 
                 // Push the node into the queue
-                pq.push(BFSNode(Coord(next_x, next_y), dist + 1));
+                pq.push(BFSNode(Coord(next_x, next_y), dist + 10));
                 
                 // Set the grid as visited
                 _visited[next_y][next_x] = true;
+            } else {
+                // The coordinate is not valid 
+                // Thus the corresponding diagonal route is invalid
+                diagonal_valid[i] = false;
             }
+        }
+
+        // Further inspect the diagonally adjacent nodes
+        for (size_t i = 0; i < 4; ++i) {
+
+            if (diagonal_valid[i]) {
+
+                int next_x = coord.x + d_offset_x[i];
+                int next_y = coord.y + d_offset_y[i];
+
+                if (not _visited[next_y][next_x]) {
+                    // Push the node into the queue
+                    pq.push(BFSNode(Coord(next_x, next_y), dist + 14));
+
+                    _visited[next_y][next_x] = true;
+                }
+            } 
         }
     }
 }
