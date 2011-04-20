@@ -45,25 +45,32 @@ class GridMap {
 
     private:
 
-        // helper functions
-        void clearGridsFlags(); // Clear all grids' directions
-                                // and mark them as unvisited.
-                                // used in updateRoute()
+    // helper functions
 
-        bool isValidCoord(int x, int y); // Determine whether the given
-                                         // coordinate is valid
+        // Clear all grids' directions and mark them as unvisited.
+        // used in updateRoute()
+        void clearGridsFlags(); 
+
+        // Determine whether the given coordinate is valid
+        bool isValidCoord(int x, int y); 
                                 
 
-        // data memebers
-        Grid **_grids;      // two dimensional array to hold the grids
-        bool **_visited;    // two dimensional array to hold the visit
-                            // of the grids.
-                            // used in updateRoute;
+    // data memebers
 
-        int _width;    // width of grid map
-        int _height;   // height of grid map
+        // two dimensional array to hold the grids
+        Grid **_grids;      
+        Grid *g;
 
-        Coord _target;      // coordinate of source grid
+        // two dimensional array to hold the visit of the grids.
+        // used in updateRoute;
+        bool **_visited;    
+
+        // width and height of the grid map
+        int _width;    
+        int _height;
+
+        // coordinate of source grid
+        Coord _target; 
 };
 
 #endif 

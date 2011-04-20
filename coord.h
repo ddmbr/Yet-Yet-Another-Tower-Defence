@@ -3,9 +3,9 @@
 
 struct Coord {
     Coord() {};
-    Coord(unsigned x, unsigned y)
+    Coord(int x, int y)
         :x(x), y(y) {}
-    unsigned x, y;
+    int x, y;
 };
 
 #endif

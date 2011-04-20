@@ -1,6 +1,5 @@
 #define DEBUG
 
-#include <cstdio>
 #include <cstdlib>
 
 #include "grid.h"
@@ -13,6 +12,8 @@ int main(int argc, char *argv[]) {
     gm->setTarget(5, 5);
     gm->updateRoute();
     gm->debugPrint();
+
+    delete gm;
 
     return EXIT_SUCCESS;
 }

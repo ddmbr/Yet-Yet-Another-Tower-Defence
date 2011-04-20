@@ -3,6 +3,7 @@
 #include "gridmap.h"
 
 #include <cstdlib>
+#include <cstdio>
 #include <queue>
 #include <unistd.h>
 
@@ -26,7 +27,9 @@ struct BFSNode {
 // GridMap constructor 
 GridMap::GridMap(int width, int height)
     :_width(width),
-     _height(height) {
+     _height(height),
+     _grids(NULL),
+     _visited(NULL) {
     // construct a two dimensional array of grids and visit
     _grids = new Grid*[height];
     _visited = new bool*[height];
@@ -39,11 +42,11 @@ GridMap::GridMap(int width, int height)
 // Destructor
 GridMap::~GridMap() {
     for (size_t i = 0; i < _height; ++i) {
-        delete _grids[i];
-        delete _visited[i];
+        delete [] _grids[i];
+        delete [] _visited[i];
     }
-    delete _grids;
-    delete _visited;
+    delete [] _grids;
+    delete [] _visited;
 }
 
 // Set the target coordinate of the map

@@ -5,7 +5,6 @@ Grid::Grid()
      
 }
 
-
 Grid::~Grid() {
 
 }
@@ -29,4 +28,3 @@ Grid::Direction Grid::getDirection() const {
 bool Grid::isOccupied() const {
     return _is_occupied;
 }
-
