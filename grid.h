@@ -3,6 +3,7 @@
 
 #include <set>
 
+// Forward decalrations
 class Creep;
 class Tower;
 
@@ -35,8 +36,11 @@ class Grid {
         // Get the direction
         Direction getDirection() const;
 
-        // Determine whether this grid is occupied by a tower
-        bool isOccupied() const;
+        // Set whether this grid is walkable by creeps
+        void setWalkable(bool walkable);
+
+        // Determine whether this grid is walkable
+        bool isWalkable() const;
 
     private:
 
@@ -44,6 +48,8 @@ class Grid {
         Tower *_tower;
 
         Direction _direction;
+
+        bool _is_walkable;
 };
 
 #endif

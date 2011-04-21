@@ -29,9 +29,17 @@ class GridMap {
         // y grows from top to bottom.
         void setTarget(Coord coord);
 
+        // Add another source coordinate of the grid map
+        // The source is where the creeps spawn
+//        void addSource(Coord coord);
+
         // Update the routes, this method is called each time
         // a new tower is built or a present tower is destroyed.
         void updateRoute();
+
+
+        // Check to see whether one of the 
+        void isBlocked();
 
         // Add a tower with given coordinate into the map
         // If the given coordinate has already been occupied

@@ -192,12 +192,12 @@ void GridMap::updateRoute() {
 }
 
 
-// Add a tower with given coordinate into the map
-// If the given coordinate has already been occupied
-// by another tower, this method will return false
+// Add a tower with given coordinate into the map.
+// If the grid on the given coordinate is not walkable,
+// this method will return false
 bool GridMap::addTower(Coord coord, Tower *tower) {
     Grid *grid = _grids[coord.y] + coord.x;
-    if (grid->isOccupied() == false) {
+    if (grid->isWalkable()) {
         grid->addTower(tower);
         return true;
     }
@@ -224,9 +224,12 @@ void GridMap::clearGridsFlags() {
 }
 
 // Determine if the given coordinate is inside the map
+// and is walkable
 bool GridMap::isValidCoord(Coord coord) {
-    return coord.x >= 0 and coord.x < _width and
-           coord.y >= 0 and coord.y < _height;
+    int x = coord.x, y = coord.y;
+    return x >= 0 and x < _width and
+           y >= 0 and y < _height and
+           _grids[y][x].isWalkable();
 }
 
 
