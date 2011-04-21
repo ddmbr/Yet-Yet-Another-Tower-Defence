@@ -1,8 +1,6 @@
 #include "grid.h"
 
-Grid::Grid()
-    :_is_occupied(false) {
-     
+Grid::Grid() {
 }
 
 Grid::~Grid() {
@@ -18,11 +16,11 @@ void Grid::removeCreep(Creep *creep) {
 }
 
 void Grid::addTower(Tower *tower) {
-    _towers.insert(tower);
+    _tower = tower;
 }
 
-void Grid::removeTower(Tower *tower) {
-    _towers.erase(tower);
+void Grid::removeTower() {
+    _tower = NULL;
 }
 
 
@@ -35,5 +33,5 @@ Grid::Direction Grid::getDirection() const {
 }
 
 bool Grid::isOccupied() const {
-    return _is_occupied;
+    return _tower != NULL;
 }

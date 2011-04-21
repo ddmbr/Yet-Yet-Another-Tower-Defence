@@ -33,6 +33,11 @@ class GridMap {
         // a new tower is built or a present tower is destroyed.
         void updateRoute();
 
+        // Add a tower with given coordinate into the map
+        // If the given coordinate has already been occupied
+        // by another tower, this method will return false
+        bool addTower(Coord coord, Tower *tower);
+
         // Get the width of the map
         int getWidth() const;
 

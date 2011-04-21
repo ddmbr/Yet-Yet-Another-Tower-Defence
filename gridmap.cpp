@@ -191,6 +191,19 @@ void GridMap::updateRoute() {
     }
 }
 
+
+// Add a tower with given coordinate into the map
+// If the given coordinate has already been occupied
+// by another tower, this method will return false
+bool GridMap::addTower(Coord coord, Tower *tower) {
+    Grid *grid = _grids[coord.y] + coord.x;
+    if (grid->isOccupied() == false) {
+        grid->addTower(tower);
+        return true;
+    }
+    return false;
+}
+
 int GridMap::getWidth() const {
     return _width;
 }
@@ -252,5 +265,6 @@ void GridMap::debugPrint() const {
         puts("");
     }
 }
+
 
 #endif

@@ -26,8 +26,8 @@ class Grid {
         // Add a tower to this grid
         void addTower(Tower *tower);
 
-        // Remove a tower from this grid
-        void removeTower(Tower *tower);
+        // Remove the tower from this grid
+        void removeTower();
 
         // Set the direction which the creeps on this grid should head for
         void setDirection(Direction dir);
@@ -41,11 +41,9 @@ class Grid {
     private:
 
         std::set<Creep *> _creeps;
-        std::set<Tower *> _towers;
+        Tower *_tower;
 
         Direction _direction;
-
-        bool _is_occupied;
 };
 
 #endif
