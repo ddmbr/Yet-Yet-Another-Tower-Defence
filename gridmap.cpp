@@ -2,21 +2,24 @@
 #include "grid.h"
 #include "gridmap.h"
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <queue>
-#include <unistd.h>
 
-// struct BFSNode
+// struct GreedyNode
 // Data fields:
 //     Coord coord: coordinate of this node
 //     int dist: distance from the source node to this node
+//
+// Node with smaller dist will have higher priority
+// while being stored in the priority_queue
+//
 // Used in GridMap::updateRoute()
-struct BFSNode {
-    BFSNode(Coord coord, int dist)
+struct GreedyNode {
+    GreedyNode(Coord coord, int dist)
         :coord(coord),
          dist(dist) {}
-    bool operator<(const BFSNode &rhs) const {
+    bool operator<(const GreedyNode &rhs) const {
         return dist > rhs.dist;
     }
     Coord coord;
@@ -30,6 +33,7 @@ GridMap::GridMap(int width, int height)
      _height(height),
      _grids(NULL),
      _visited(NULL) {
+
     // construct a two dimensional array of grids and visit
     _grids = new Grid*[height];
     _visited = new bool*[height];
@@ -50,15 +54,14 @@ GridMap::~GridMap() {
 }
 
 // Set the target coordinate of the map
-void GridMap::setTarget(int x, int y) {
-    _target = Coord(x, y);
+void GridMap::setTarget(Coord coord) {
+    _target = coord;
 }
 
 // Update the routes, this method is called each time
 // a new tower is built or a present tower is destroyed.
 //
-// This method uses a variant of Breadth-First Search to
-// calculate the routes.
+// This method uses a Greedy algorithm to calculate the routes.
 //
 // To begin with, the target node is pushed into the priority
 // queue with distance 0. While the priorit queue is not
@@ -116,22 +119,23 @@ void GridMap::updateRoute() {
         Grid::BOTTOMRIGHT, Grid::TOPRIGHT, Grid::TOPLEFT, Grid::BOTTOMLEFT
     };
 
-    // indicate whether the diagonal direction is available
-    bool diagonal_valid[] = {true, true, true, true};
 
     // Step1: Clear all grids' direction to be Grid::NONE
     //        and mark all grids as un-visited
     clearGridsFlags();
 
-    // Step2: Begin BFS
-    std::priority_queue<BFSNode> pq;
-    pq.push(BFSNode(_target, 0));
+    // Step2: Begin Greedy
+    std::priority_queue<GreedyNode> pq;
+    pq.push(GreedyNode(_target, 0));
     _visited[_target.y][_target.x] = true;
 
     while (not pq.empty()) {
 
+        // indicate whether the diagonal direction is available
+        bool diagonal_valid[] = {true, true, true, true};
+
         // take one node from the queue
-        BFSNode node = pq.top();
+        GreedyNode node = pq.top();
         pq.pop();
 
         Coord coord = node.coord;
@@ -144,14 +148,14 @@ void GridMap::updateRoute() {
             int next_x = coord.x + offset_x[i];
             int next_y = coord.y + offset_y[i];
 
-            if (isValidCoord(next_x, next_y)) {
+            if (isValidCoord(Coord(next_x, next_y))) {
 
                 if (not _visited[next_y][next_x]) {
                     // Update the grid's direction
                     _grids[next_y][next_x].setDirection(dirs[i]);
                     
                     // Push the node into the queue
-                    pq.push(BFSNode(Coord(next_x, next_y), dist + 10));
+                    pq.push(GreedyNode(Coord(next_x, next_y), dist + 10));
                     
                     // Mark the grid as visited
                     _visited[next_y][next_x] = true;
@@ -159,7 +163,7 @@ void GridMap::updateRoute() {
 
             } else {
                 // The coordinate is invalid 
-                // Thus the corresponding diagonal route is invalid
+                // Thus the corresponding diagonal coordinate is invalid
                 diagonal_valid[i] = false;
                 diagonal_valid[(i + 1) % 4] = false;
             }
@@ -178,7 +182,7 @@ void GridMap::updateRoute() {
                     _grids[next_y][next_x].setDirection(ddirs[i]);
 
                     // Push the node into the queue
-                    pq.push(BFSNode(Coord(next_x, next_y), dist + 14));
+                    pq.push(GreedyNode(Coord(next_x, next_y), dist + 14));
 
                     // Mark the grid as visited
                     _visited[next_y][next_x] = true;
@@ -208,9 +212,9 @@ void GridMap::clearGridsFlags() {
 }
 
 // Determine if the given coordinate is inside the map
-bool GridMap::isValidCoord(int x, int y) {
-    return x >= 0 and x < _width and
-           y >= 0 and y < _height;
+bool GridMap::isValidCoord(Coord coord) {
+    return coord.x >= 0 and coord.x < _width and
+           coord.y >= 0 and coord.y < _height;
 }
 
 
@@ -219,13 +223,13 @@ bool GridMap::isValidCoord(int x, int y) {
 #include <cstdio>
 
 void GridMap::debugPrint() const {
-    printf("   ");
+    printf("  ");
     for (size_t i = 0; i < _width; ++i) {
-        printf("%3d", i);
+        printf("%2d", i);
     }
     puts("");
     for (size_t i = 0; i < _height; ++i) {
-        printf("%3d ", i);
+        printf("%2d ", i);
         for (size_t j = 0; j < _width; ++j) {
             switch (_grids[i][j].getDirection()) {
                 case Grid::NONE:
@@ -244,7 +248,7 @@ void GridMap::debugPrint() const {
                 default:
                     putchar('/'); break;
             }
-            putchar(' ');
+            printf(" ");
         }
         puts("");
     }

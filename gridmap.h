@@ -27,7 +27,7 @@ class GridMap {
         // The target coordinate is where the creeps exit
         // note that x grows from left to right and
         // y grows from top to bottom.
-        void setTarget(int x, int y);
+        void setTarget(Coord coord);
 
         // Update the routes, this method is called each time
         // a new tower is built or a present tower is destroyed.
@@ -52,7 +52,7 @@ class GridMap {
         void clearGridsFlags(); 
 
         // Determine whether the given coordinate is valid
-        bool isValidCoord(int x, int y); 
+        bool isValidCoord(Coord coord); 
                                 
 
     // data memebers
