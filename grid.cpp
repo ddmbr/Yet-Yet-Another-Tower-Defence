@@ -17,6 +17,15 @@ void Grid::removeCreep(Creep *creep) {
     _creeps.erase(creep);
 }
 
+void Grid::addTower(Tower *tower) {
+    _towers.insert(tower);
+}
+
+void Grid::removeTower(Tower *tower) {
+    _towers.erase(tower);
+}
+
+
 void Grid::setDirection(Direction dir) {
     _direction = dir;
 }

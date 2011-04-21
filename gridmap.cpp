@@ -2,9 +2,8 @@
 #include "grid.h"
 #include "gridmap.h"
 
-#include <cstdio>
-#include <cstdlib>
-#include <queue>
+#include <cstddef> // For NULL and size_t
+#include <queue>   // For priority_queue
 
 // struct GreedyNode
 // Data fields:
@@ -124,7 +123,7 @@ void GridMap::updateRoute() {
     //        and mark all grids as un-visited
     clearGridsFlags();
 
-    // Step2: Begin Greedy
+    // Step2: Begin Greedy Search
     std::priority_queue<GreedyNode> pq;
     pq.push(GreedyNode(_target, 0));
     _visited[_target.y][_target.x] = true;
