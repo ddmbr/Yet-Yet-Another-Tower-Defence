@@ -15,13 +15,14 @@
 //
 // Used in GridMap::updateRoute()
 struct GreedyNode {
-    GreedyNode(Coord coord, int dist)
-        :coord(coord),
+    GreedyNode(int x, int y, int dist)
+        :x(x),
+         y(y),
          dist(dist) {}
     bool operator<(const GreedyNode &rhs) const {
         return dist > rhs.dist;
     }
-    Coord coord;
+    int x, y;
     int dist;
 };
 
@@ -53,8 +54,9 @@ GridMap::~GridMap() {
 }
 
 // Set the target coordinate of the map
-void GridMap::setTarget(Coord coord) {
-    _target = coord;
+void GridMap::setTarget(int x, int y) {
+    _target_x = x;
+    _target_y = y;
 }
 
 // Update the routes, this method is called each time
@@ -125,8 +127,8 @@ void GridMap::updateRoute() {
 
     // Step2: Begin Greedy Search
     std::priority_queue<GreedyNode> pq;
-    pq.push(GreedyNode(_target, 0));
-    _visited[_target.y][_target.x] = true;
+    pq.push(GreedyNode(_target_x, _target_y, 0));
+    _visited[_target_y][_target_x] = true;
 
     while (not pq.empty()) {
 
@@ -137,24 +139,24 @@ void GridMap::updateRoute() {
         GreedyNode node = pq.top();
         pq.pop();
 
-        Coord coord = node.coord;
+        int x = node.x, y = node.y;
         int dist = node.dist;
 
         // Inspect the adjacent nodes
         for (size_t i = 0; i < 4; ++i) {
 
             // Next node's coordinate
-            int next_x = coord.x + offset_x[i];
-            int next_y = coord.y + offset_y[i];
+            int next_x = x + offset_x[i];
+            int next_y = y + offset_y[i];
 
-            if (isValidCoord(Coord(next_x, next_y))) {
+            if (isValidCoord(next_x, next_y)) {
 
                 if (not _visited[next_y][next_x]) {
                     // Update the grid's direction
                     _grids[next_y][next_x].setDirection(dirs[i]);
                     
                     // Push the node into the queue
-                    pq.push(GreedyNode(Coord(next_x, next_y), dist + 10));
+                    pq.push(GreedyNode(next_x, next_y, dist + 10));
                     
                     // Mark the grid as visited
                     _visited[next_y][next_x] = true;
@@ -173,15 +175,15 @@ void GridMap::updateRoute() {
 
             if (diagonal_valid[i]) {
 
-                int next_x = coord.x + d_offset_x[i];
-                int next_y = coord.y + d_offset_y[i];
+                int next_x = x + d_offset_x[i];
+                int next_y = y + d_offset_y[i];
 
                 if (not _visited[next_y][next_x]) {
                     // Update the grid's direction
                     _grids[next_y][next_x].setDirection(ddirs[i]);
 
                     // Push the node into the queue
-                    pq.push(GreedyNode(Coord(next_x, next_y), dist + 14));
+                    pq.push(GreedyNode(next_x, next_y, dist + 14));
 
                     // Mark the grid as visited
                     _visited[next_y][next_x] = true;
@@ -195,8 +197,8 @@ void GridMap::updateRoute() {
 // Add a tower with given coordinate into the map.
 // If the grid on the given coordinate is not walkable,
 // this method will return false
-bool GridMap::addTower(Coord coord, Tower *tower) {
-    Grid *grid = _grids[coord.y] + coord.x;
+bool GridMap::addTower(int x, int y, Tower *tower) {
+    Grid *grid = _grids[y] + x;
     if (grid->isWalkable()) {
         grid->addTower(tower);
         return true;
@@ -225,8 +227,7 @@ void GridMap::clearGridsFlags() {
 
 // Determine if the given coordinate is inside the map
 // and is walkable
-bool GridMap::isValidCoord(Coord coord) {
-    int x = coord.x, y = coord.y;
+bool GridMap::isValidCoord(int x, int y) {
     return x >= 0 and x < _width and
            y >= 0 and y < _height and
            _grids[y][x].isWalkable();

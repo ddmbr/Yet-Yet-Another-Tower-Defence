@@ -27,11 +27,11 @@ class GridMap {
         // The target coordinate is where the creeps exit
         // note that x grows from left to right and
         // y grows from top to bottom.
-        void setTarget(Coord coord);
+        void setTarget(int x, int y);
 
         // Add another source coordinate of the grid map
         // The source is where the creeps spawn
-//        void addSource(Coord coord);
+//        void addSource(int x, int y);
 
         // Update the routes, this method is called each time
         // a new tower is built or a present tower is destroyed.
@@ -44,7 +44,7 @@ class GridMap {
         // Add a tower with given coordinate into the map
         // If the given coordinate has already been occupied
         // by another tower, this method will return false
-        bool addTower(Coord coord, Tower *tower);
+        bool addTower(int x, int y, Tower *tower);
 
         // Get the width of the map
         int getWidth() const;
@@ -65,7 +65,7 @@ class GridMap {
         void clearGridsFlags(); 
 
         // Determine whether the given coordinate is valid
-        bool isValidCoord(Coord coord); 
+        bool isValidCoord(int x, int y); 
                                 
 
     // data memebers
@@ -82,7 +82,8 @@ class GridMap {
         int _height;
 
         // coordinate of source grid
-        Coord _target; 
+        int _target_x; 
+        int _target_y;
 };
 
 #endif 
