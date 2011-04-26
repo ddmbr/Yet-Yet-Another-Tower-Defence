@@ -8,22 +8,6 @@ Grid::~Grid() {
 
 }
 
-void Grid::addCreep(Creep *creep) {
-    _creeps.insert(creep);
-}
-
-void Grid::removeCreep(Creep *creep) {
-    _creeps.erase(creep);
-}
-
-void Grid::addTower(Tower *tower) {
-    _tower = tower;
-}
-
-void Grid::removeTower() {
-    _tower = NULL;
-}
-
 void Grid::setWalkable(bool walkable) {
     _is_walkable = walkable;
 }
@@ -37,5 +21,5 @@ Grid::Direction Grid::getDirection() const {
 }
 
 bool Grid::isWalkable() const {
-    return _is_walkable and _tower == NULL;
+    return _is_walkable;
 }

@@ -3,10 +3,9 @@
 
 #include <set>
 
-// Forward decalrations
-class Creep;
-class Tower;
 
+// Grid class, stores the information of the creeps or 
+// tower on this grid
 class Grid {
 
     public:
@@ -17,18 +16,6 @@ class Grid {
 
         Grid();
         ~Grid();
-
-        // Add a creep to this grid
-        void addCreep(Creep *creep);
-
-        // Remove a creep from this grid
-        void removeCreep(Creep *creep);
-
-        // Add a tower to this grid
-        void addTower(Tower *tower);
-
-        // Remove the tower from this grid
-        void removeTower();
 
         // Set the direction which the creeps on this grid should head for
         void setDirection(Direction dir);
@@ -43,9 +30,6 @@ class Grid {
         bool isWalkable() const;
 
     private:
-
-        std::set<Creep *> _creeps;
-        Tower *_tower;
 
         Direction _direction;
 

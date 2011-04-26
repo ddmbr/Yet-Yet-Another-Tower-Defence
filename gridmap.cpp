@@ -1,4 +1,3 @@
-#include "coord.h"
 #include "grid.h"
 #include "gridmap.h"
 
@@ -29,10 +28,10 @@ struct GreedyNode {
 
 // GridMap constructor 
 GridMap::GridMap(int width, int height)
-    :_width(width),
-     _height(height),
-     _grids(NULL),
-     _visited(NULL) {
+    :_grids(NULL),
+     _visited(NULL),
+     _width(width),
+     _height(height) {
 
     // construct a two dimensional array of grids and visit
     _grids = new Grid*[height];
@@ -53,11 +52,18 @@ GridMap::~GridMap() {
     delete [] _visited;
 }
 
+// Set the source coordinate of the map
+//void GridMap::setSource(int x, int y) {
+//    _source_x = x;
+//    _source_y = y;
+//}
+
 // Set the target coordinate of the map
 void GridMap::setTarget(int x, int y) {
     _target_x = x;
     _target_y = y;
 }
+
 
 // Update the routes, this method is called each time
 // a new tower is built or a present tower is destroyed.
@@ -75,7 +81,7 @@ void GridMap::setTarget(int x, int y) {
 // The Creeps can go horizontally, vertically or diagonally.
 // A diagonal direction is valid only when the the diagonal
 // grid can be accessed from both the two ways:
-// eg: 
+// e.g.
 //    A | B       A -> D is valid only when both
 //    --+--       A -> B -> D is valid and
 //    C | D       A -> C -> D is valid
@@ -194,17 +200,6 @@ void GridMap::updateRoute() {
 }
 
 
-// Add a tower with given coordinate into the map.
-// If the grid on the given coordinate is not walkable,
-// this method will return false
-bool GridMap::addTower(int x, int y, Tower *tower) {
-    Grid *grid = _grids[y] + x;
-    if (grid->isWalkable()) {
-        grid->addTower(tower);
-        return true;
-    }
-    return false;
-}
 
 int GridMap::getWidth() const {
     return _width;

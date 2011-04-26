@@ -1,8 +1,7 @@
 #ifndef TOWER_H
 #define TOWER_H
 
-#include "coord.h"
-
+#include <set>
 
 // Abstract base tower class
 class Tower {
@@ -10,27 +9,31 @@ class Tower {
     public:
         
         Tower();
-        virtual ~Tower() = 0;
+        virtual ~Tower();
 
-        // Attack the creep if the cooldown count has reached 0,
+        // Return the creep if the cooldown count has reached 0,
         // otherwise decrease the cooldown count
-        virtual void attack() = 0;
+//        virtual bool attack() = 0;
 
         // Set the coordinate of this tower on the grid map
-        // Note: this method should be called by GridMap
-        void setCoord(Coord coord);
+        // Note: this method should only be called by GridMap
+//        void setCoord(int x, int y);
+
+        // Set the attack range of this tower
+        void setRange(int range);
 
         // Set the cooldown (attack interval) of the tower
         void setCooldown(int cooldown);
 
-        // Get the coordinate of this tower on the grid map
-        Coord getCoord() const;
-
-        void set 
+        // Get the x and y coordinates of this tower on the grid map
+        int getX() const;
+        int getY() const;
 
     protected:
 
-        Coord _coord; // coordinate of this tower on grid map
+        int _x, _y;          // x and y coordinates
+
+        int _range;
 
         int _cooldown;       // cooldown (attack interval)
         int _cooldown_count; // cooldown count
